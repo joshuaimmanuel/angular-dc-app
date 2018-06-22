@@ -10,142 +10,172 @@ import * as d3 from 'd3';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  @ViewChild('subjectA')
-  subjectADiv: ElementRef;
+  @ViewChild('subjectAGraph')
+  subjectAGraph: ElementRef;
 
+  @ViewChild('nameAGraph')
+  nameAGraph: ElementRef;
 
-  subject_DA;
-  mirror_subject_DB;
-  subject_AG;
-  name_DA;
-  mirror_subject_DA;
-  mirror_name_DA;
-  subject_DB;
-  name_DB;
-  mirror_name_DB;
-  subjectAChart;
-  name_AG;
-  subject_BG;
-  name_BG;
-  subjectBChart;
-  nameAChart;
-  nameBChart;
-  markAChart;
-  markBChart;
-  mark_DA;
-  mirror_mark_DA;
-  mirror_mark_DB;
-  mark_AG;
-  mark_DB;
-  mark_BG;
+  @ViewChild('markAGraph')
+  markAGraph: ElementRef;
 
+  @ViewChild('subjectBGraph')
+  subjectBGraph: ElementRef;
+
+  @ViewChild('nameBGraph')
+  nameBGraph: ElementRef;
+
+  @ViewChild('markBGraph')
+  markBGraph: ElementRef;
+
+  subjectARowChart;
+  subjectBRowChart;
+  nameAPieChart;
+  nameBPieChart;
+  markARowChart;
+  markBRowChart;
+
+  // dimensions for dataset-a and its mirror
+  subjectDimensionA;
+  subjectDimensionAMirror;
+  nameDimensionA;
+  nameDimensionAMirror;
+  markDimensionA;
+  markDimensionAMirror;
+  // dimensions for dataset-b and its mirror
+  subjectDimensionB;
+  subjectDimensionBMirror;
+  nameDimensionB;
+  nameDimensionBMirror;
+  markDimensionB;
+  markDimensionBMirror;
+  // groups
+  subjectGroupA;
+  nameGroupA;
+  markGroupA;
+  subjectGroupB;
+  nameGroupB;
+  markGroupB;
+
+  // datasets
   datasetA = [
-    {"Subject":"s1","Name":"A","Mark":"50"},
-    {"Subject":"s2","Name":"B","Mark":"40"},
-    {"Subject":"s3","Name":"C","Mark":"40"}];
-        // Dataset B
+    {'Subject': 's1', 'Name': 'A', 'Mark': '50'},
+    {'Subject': 's2', 'Name': 'B', 'Mark': '40'},
+    {'Subject': 's3', 'Name': 'C', 'Mark': '40'}];
   datasetB = [
-    {"Subject":"s1","Name":"A","Mark":"50"},
-    {"Subject":"s2","Name":"B","Mark":"40"},
-    {"Subject":"C3","Name":"C","Mark":"40"}];
+    {'Subject': 's1', 'Name': 'A', 'Mark': '50'},
+    {'Subject': 's2', 'Name': 'B', 'Mark': '40'},
+    {'Subject': 'C3', 'Name': 'C', 'Mark': '40'}];
 
 
   ngOnInit() {
-    let CFA = crossfilter(this.datasetA);
-    let CFB = crossfilter(this.datasetB);
 
+    // Initialize graphs for dataset-a
+    this.subjectARowChart = dc.rowChart(this.subjectAGraph.nativeElement);
+    this.nameAPieChart = dc.pieChart(this.nameAGraph.nativeElement);
+    this.markARowChart = dc.rowChart(this.markAGraph.nativeElement);
+    // Initialize graphs for dataset-b
+    this.subjectBRowChart = dc.rowChart(this.subjectBGraph.nativeElement);
+    this.nameBPieChart = dc.pieChart(this.nameBGraph.nativeElement);
+    this.markBRowChart = dc.rowChart(this.markBGraph.nativeElement);
 
-    this.subject_DA = CFA.dimension(function(d){ return d.Subject; });
-    this.name_DA = CFA.dimension(function(d){ return d.Name; });
-    // mirror dimensions to receive events from crossfilter B
-    this.mirror_subject_DA = CFA.dimension(function(d){ return d.Subject; });
-    this.mirror_name_DA = CFA.dimension(function(d){ return d.Name; });
+    // create crossfilter for dataset a and b
+    const CFA = crossfilter(this.datasetA);
+    const CFB = crossfilter(this.datasetB);
 
-    this.subject_DB = CFB.dimension(function(d){ return d.Subject; });
-    this.name_DB = CFB.dimension(function(d){ return d.Name; });
-    // mirror dimensions to receive events from crossfilter A
-    this.mirror_subject_DB = CFB.dimension(function(d){ return d.Subject; });
-    this.mirror_name_DB = CFB.dimension(function(d){ return d.Name; });
+    // create dimension objects for dataset-a
+    this.subjectDimensionA = CFA.dimension(function (d) { return d.Subject; });
+    this.subjectDimensionAMirror = CFA.dimension(
+      function (d) { return d.Subject; });
+    this.nameDimensionA = CFA.dimension(function (d) { return d.Name; });
+    this.nameDimensionAMirror = CFA.dimension(function (d) { return d.Name; });
+    this.markDimensionA = CFA.dimension(function (d) { return d.Mark; });
+    this.markDimensionAMirror = CFA.dimension(function (d) { return d.Mark; });
 
-    this.mark_DA = CFA.dimension(function(d) { return d.Mark; });
-    this.mirror_mark_DA = CFA.dimension(function(d){ return d.Mark; });
-    this.mark_DB = CFB.dimension(function(d){ return d.Mark; });
-    this.mirror_mark_DB = CFB.dimension(function(d){ return d.Mark; });
+    // create dimension objects for dataset-b
+    this.subjectDimensionB = CFB.dimension(function (d) { return d.Subject; });
+    this.subjectDimensionBMirror = CFB.dimension(
+      function (d) { return d.Subject; });
+    this.nameDimensionB = CFB.dimension(function (d) { return d.Name; });
+    this.nameDimensionBMirror = CFB.dimension(function (d) { return d.Name; });
+    this.markDimensionB = CFB.dimension(function (d) { return d.Mark; });
+    this.markDimensionBMirror = CFB.dimension(function (d) { return d.Mark; });
 
+    // create groups for dataset-a
+    this.subjectGroupA = this.subjectDimensionA.group();
+    this.nameGroupA = this.nameDimensionA.group();
+    this.markGroupA = this.markDimensionA.group();
+    // create groups for dataset-b
+    this.subjectGroupB = this.subjectDimensionB.group();
+    this.nameGroupB = this.nameDimensionB.group();
+    this.markGroupB = this.markDimensionB.group();
 
-    // Creating the chart
-    this.subjectAChart = dc.rowChart(this.subjectADiv.nativeElement);
-    this.nameAChart = dc.pieChart("#nameA");
-    this.markAChart = dc.rowChart("#markA");
-    this.subjectBChart = dc.rowChart("#subjectB");
-    this.nameBChart = dc.pieChart("#nameB");
-    this.markBChart = dc.rowChart("#markB");
-
-    // Creating the group
-    this.subject_AG = this.subject_DA.group();
-    this.name_AG = this.name_DA.group();
-    this.mark_AG = this.mark_DA.group();
-
-    this.subject_BG = this.subject_DB.group();
-    this.name_BG = this.name_DB.group();
-    this.mark_BG = this.mark_DB.group();
-
-    this.subjectAChart
+    // create charts for dataset-a
+    this.subjectARowChart
       .width(250).height(200)
       .margins({top: 5, left: 10, right: 10, bottom: 20})
-      .dimension(this.mirror_dimension(this.subject_DA, this.mirror_subject_DB))
-      .group(this.subject_AG)
+      .dimension(this.mirrorDimension(
+        this.subjectDimensionA, this.subjectDimensionBMirror))
+      .group(this.subjectGroupA)
       .gap(2)
-      .title(function(d){  return d.key;})
+      .title(function (d) { return d.key; })
       .label(function (d) { return d.key; })
       .elasticX(true)
       .colors(d3.scale.category20b())
       .xAxis().ticks(4);
 
-    this.nameAChart
+    this.nameAPieChart
       .width(200).height(200)
-      .dimension(this.mirror_dimension(this.name_DA, this.mirror_name_DB))
-      .group(this.name_AG)
+      .dimension(this.mirrorDimension(
+        this.nameDimensionA, this.nameDimensionBMirror))
+      .group(this.nameGroupA)
       .colors(d3.scale.category20())
       .innerRadius(25);
 
-    this.markAChart
+    this.markARowChart
       .width(200).height(200)
-      .dimension(this.mirror_dimension(this.mark_DA, this.mirror_mark_DB))
-      .group(this.mark_AG)
+      .dimension(this.mirrorDimension(
+        this.markDimensionA, this.markDimensionBMirror))
+      .group(this.markGroupA)
       .gap(2)
-      .title(function(d){  return d.key;})
+      .title(function (d) { return d.key; })
       .label(function (d) { return d.key; })
       .elasticX(true)
       .colors(d3.scale.category20b())
       .xAxis().ticks(4);
 
-
-    this.subjectBChart
+    // create charts for dataset-b
+    this.subjectBRowChart
       .width(250).height(200)
       .margins({top: 5, left: 10, right: 10, bottom: 20})
-      .dimension(this.mirror_dimension(this.subject_DB, this.mirror_subject_DA))
-      .group(this.subject_BG)
+      .dimension(
+        this.mirrorDimension(
+          this.subjectDimensionB, this.subjectDimensionAMirror))
+      .group(this.subjectGroupB)
       .gap(2)
-      .title(function(d){  return d.key;})
+      .title(function (d) { return d.key; })
       .label(function (d) { return d.key; })
       .elasticX(true)
       .colors(d3.scale.category20b())
       .xAxis().ticks(4);
 
-    this.nameBChart
+    this.nameBPieChart
       .width(200).height(200)
-      .dimension(this.mirror_dimension(this.name_DB, this.mirror_name_DA))
-      .group(this.name_BG)
+      .dimension(
+        this.mirrorDimension(
+          this.nameDimensionB, this.nameDimensionAMirror))
+      .group(this.nameGroupB)
       .colors(d3.scale.category10())
       .innerRadius(25);
 
-    this.markBChart
+    this.markBRowChart
       .width(200).height(200)
-      .dimension(this.mirror_dimension(this.mark_DB, this.mirror_mark_DA))
-      .group(this.mark_BG)
+      .dimension(
+        this.mirrorDimension(
+          this.markDimensionB, this.markDimensionAMirror))
+      .group(this.markGroupB)
       .gap(2)
-      .title(function(d){  return d.key;})
+      .title(function (d) { return d.key; })
       .label(function (d) { return d.key; })
       .elasticX(true)
       .colors(d3.scale.category20b())
@@ -154,8 +184,8 @@ export class AppComponent implements OnInit {
     dc.renderAll();
   }
 
-  mirror_dimension(...args: any[]) {
-    var dims = Array.prototype.slice.call(args, 0);
+  mirrorDimension(...args: any[]) {
+    const dims = Array.prototype.slice.call(args, 0);
     function mirror(fname) {
       return function(v) {
         dims.forEach(function(dim) {
