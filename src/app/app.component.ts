@@ -12,6 +12,8 @@ import * as d3 from 'd3';
 export class AppComponent implements OnInit {
   @ViewChild('subjectA')
   subjectADiv: ElementRef;
+
+
   subject_DA;
   mirror_subject_DB;
   subject_AG;
@@ -28,6 +30,14 @@ export class AppComponent implements OnInit {
   subjectBChart;
   nameAChart;
   nameBChart;
+  markAChart;
+  markBChart;
+  mark_DA;
+  mirror_mark_DA;
+  mirror_mark_DB;
+  mark_AG;
+  mark_DB;
+  mark_BG;
 
   datasetA = [
     {"Subject":"s1","Name":"A","Mark":"50"},
@@ -57,22 +67,28 @@ export class AppComponent implements OnInit {
     this.mirror_subject_DB = CFB.dimension(function(d){ return d.Subject; });
     this.mirror_name_DB = CFB.dimension(function(d){ return d.Name; });
 
+    this.mark_DA = CFA.dimension(function(d) { return d.Mark; });
+    this.mirror_mark_DA = CFA.dimension(function(d){ return d.Mark; });
+    this.mark_DB = CFB.dimension(function(d){ return d.Mark; });
+    this.mirror_mark_DB = CFB.dimension(function(d){ return d.Mark; });
+
 
     // Creating the chart
     this.subjectAChart = dc.rowChart(this.subjectADiv.nativeElement);
     this.nameAChart = dc.pieChart("#nameA");
-    // //markAChart = dc.rowChart("#markA");
-    this.subjectBChart = dc.rowChart("#subjetB");
+    this.markAChart = dc.rowChart("#markA");
+    this.subjectBChart = dc.rowChart("#subjectB");
     this.nameBChart = dc.pieChart("#nameB");
-    // //markBChart = dc.rowChart("#markB");
+    this.markBChart = dc.rowChart("#markB");
 
     // Creating the group
     this.subject_AG = this.subject_DA.group();
     this.name_AG = this.name_DA.group();
-    //		markG_AG = mark_DA.group();
+    this.mark_AG = this.mark_DA.group();
 
     this.subject_BG = this.subject_DB.group();
     this.name_BG = this.name_DB.group();
+    this.mark_BG = this.mark_DB.group();
 
     this.subjectAChart
       .width(250).height(200)
@@ -92,6 +108,17 @@ export class AppComponent implements OnInit {
       .group(this.name_AG)
       .colors(d3.scale.category20())
       .innerRadius(25);
+
+    this.markAChart
+      .width(200).height(200)
+      .dimension(this.mirror_dimension(this.mark_DA, this.mirror_mark_DB))
+      .group(this.mark_AG)
+      .gap(2)
+      .title(function(d){  return d.key;})
+      .label(function (d) { return d.key; })
+      .elasticX(true)
+      .colors(d3.scale.category20b())
+      .xAxis().ticks(4);
 
 
     this.subjectBChart
@@ -113,6 +140,16 @@ export class AppComponent implements OnInit {
       .colors(d3.scale.category10())
       .innerRadius(25);
 
+    this.markBChart
+      .width(200).height(200)
+      .dimension(this.mirror_dimension(this.mark_DB, this.mirror_mark_DA))
+      .group(this.mark_BG)
+      .gap(2)
+      .title(function(d){  return d.key;})
+      .label(function (d) { return d.key; })
+      .elasticX(true)
+      .colors(d3.scale.category20b())
+      .xAxis().ticks(4);
 
     dc.renderAll();
   }
