@@ -1,27 +1,65 @@
-# DcApp
+# Angular Application useing dc.js
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
+## Build instructions for GNU/Linux (Debian)
 
-## Development server
+* Install the system package python3-venv (if not already installed)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+    ```shell
+    $ sudo apt-get install python3-venv
+    ```
+* Create a Python virtual environment.
 
-## Code scaffolding
+    ```shell
+    $ python3 -m venv env
+    ```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+* Activate the virtual environment
 
-## Build
+    ```shell
+    $ source env/bin/activate
+    ```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+* Upgrade packaging tools.
 
-## Running unit tests
+    ```shell
+    (env) $ pip install --upgrade pip setuptools
+    ```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+* Install python wheel package
 
-## Running end-to-end tests
+    ```shell
+    (env) $ pip install wheel
+    ```
+* Install the nodeenv package for python inside the virtual environment
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+    ```shell
+    (env) $ pip install nodeenv
+    ```
+* Use the current virtual environment for nodeenv
 
-## Further help
+    ```shell
+    (env) $ nodeenv -p
+    ```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+* Install [Angular CLI](https://cli.angular.io/) inside the virtual environment
+
+    ```shell
+    (env) $ npm install -g @angular/cli
+    ```
+
+* Install npm packages required by the client application
+
+    ```shell
+    (env) $ npm install
+    ```
+
+* Serve the angular application
+
+    ```shell
+    (env) $ ng serve
+    ```
+
+> Now we can navigate to `http://localhost:4200/` in order to view the
+> application on the browser
+
+Happy Hacking :)
