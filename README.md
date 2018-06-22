@@ -1,4 +1,4 @@
-# Angular Application useing dc.js
+# Angular Application using dc.js
 
 ## Build instructions for GNU/Linux (Debian)
 
